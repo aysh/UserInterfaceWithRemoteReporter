@@ -1,0 +1,11 @@
+pushd `dirname $0` > /dev/null
+SCRIPTPATH=`pwd`
+popd > /dev/null
+export PROTOINC=$SCRIPTPATH
+export PROTOLIB=$SCRIPTPATH/protobuf-c-arm/lib
+cd Projects/zstack/linux/demo/project
+make clean
+make CC=arm-linux-gnueabihf-gcc
+rm -rf $SCRIPTPATH/out
+mkdir $SCRIPTPATH/out
+cp main.bin $SCRIPTPATH/out/
