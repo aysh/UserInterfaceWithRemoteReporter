@@ -48,6 +48,7 @@
 #include "nwkmgr.pb-c.h"
 #include "user_interface.h" 
 #include "macros.h"
+#include "reporting_engine.h"
 
 /******************************************************************************
  * Consts
@@ -188,9 +189,7 @@ void system_process_zcl_frame_receive_indication(pkt_buf_t * pkt)
 		endpointidsrc = msg->srcaddress->has_endpointid ? msg->srcaddress->endpointid : 0xFF;
 		UI_PRINT_LOG("profileid = 0x%04X", msg->profileid);
 		UI_PRINT_LOG("endpointiddest = 0x%04X", msg->endpointiddest);
-		UI_PRINT_LOG("endpointidsrc = 0x%04X", endpointidsrc);
-		UI_PRINT_LOG("clusterid = 0x%04X", msg->clusterid);
-		UI_PRINT_LOG("frametype = %d", msg->frametype);
+		UI_PRINT_LOG("endpointidsrc = 0x%04X", endpointidsrc); UI_PRINT_LOG("clusterid = 0x%04X", msg->clusterid); UI_PRINT_LOG("frametype = %d", msg->frametype);
 		UI_PRINT_LOG("manufacturerspecificflag = %d", msg->manufacturerspecificflag);
 		if (msg->has_manufacturercode)
 		{
@@ -202,6 +201,11 @@ void system_process_zcl_frame_receive_indication(pkt_buf_t * pkt)
 		}
 		UI_PRINT_LOG("clientserverdirection = %d", msg->clientserverdirection);
 		UI_PRINT_LOG("commandid = %d", msg->commandid);
+		//Hack this portion
+		UI_PRINT_LOG("Yaay! I got the commandid  { %d }, ieeeaddress { 0x%016X } and endpointsrc { 0x%04X } ya bastard", 
+msg->commandid, msg->srcaddress->ieeeaddr, endpointidsrc);
+		send_report_data(msg->srcaddress->ieeeaddr, msg->commandid);
+		//Hack end
 		UI_PRINT_LOG("payload = 0x%08X", (uint32_t *)&msg->payload);
 
 		if ((msg->profileid == 0x0104) &&

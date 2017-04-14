@@ -15,7 +15,7 @@ CFLAGS= -c -Wall -g -std=gnu99
 
 VPATH = $(PROJ_DIR):$(PROJ_DIR)/../framework:$(PROJ_DIR)/../engines:$(PROJ_DIR)/../../nwkmgr:$(PROJ_DIR)/../../hagateway:$(PROJ_DIR)/../../otaserver
 
-SRCS = main.c polling.c timer_utils.c socket_interface.c tcp_client.c user_interface.c data_structures.c network_info_engine.c device_list_engine.c sensor_engine.c state_reflector.c attribute_engine.c actions_engine.c commissioning_engine.c system_engine.c ota_engine.c nwkmgr.pb-c.c gateway.pb-c.c otasrvr.pb-c.c group_scene_engine.c macros.c 
+SRCS = main.c polling.c timer_utils.c socket_interface.c tcp_client.c user_interface.c data_structures.c network_info_engine.c device_list_engine.c sensor_engine.c state_reflector.c attribute_engine.c actions_engine.c commissioning_engine.c system_engine.c ota_engine.c nwkmgr.pb-c.c gateway.pb-c.c otasrvr.pb-c.c group_scene_engine.c reporting_engine.c macros.c 
 
 OBJS = $(SRCS:%.c=%.o) 
 
