@@ -20,15 +20,15 @@ void send_report_data(uint64_t ieeeaddr, uint8_t commandid)
 		pkt->header.cmd_id = CMD_SEND_REPORT;
 		//uint8_t * buffer = malloc(sizeof(uint8_t));
 		//uint8_t buffer[] = {7,8};
-		pkt->packed_protobuf_packet[0] = (ieeeaddr>>(8*7))&0xFF;
-		pkt->packed_protobuf_packet[1] = (ieeeaddr>>(8*6))&0xFF;
-		pkt->packed_protobuf_packet[2] = (ieeeaddr>>(8*5))&0xFF;
-		pkt->packed_protobuf_packet[3] = (ieeeaddr>>(8*4))&0xFF;
-		pkt->packed_protobuf_packet[4] = (ieeeaddr>>(8*3))&0xFF;
-		pkt->packed_protobuf_packet[5] = (ieeeaddr>>(8*2))&0xFF;
-		pkt->packed_protobuf_packet[6] = (ieeeaddr>>(8*1))&0xFF;
-		pkt->packed_protobuf_packet[7] = (ieeeaddr>>(8*0))&0xFF;
 		pkt->packed_protobuf_packet[8] = commandid;
+		pkt->packed_protobuf_packet[7] = (ieeeaddr>>(8*7))&0xFF;
+		pkt->packed_protobuf_packet[6] = (ieeeaddr>>(8*6))&0xFF;
+		pkt->packed_protobuf_packet[5] = (ieeeaddr>>(8*5))&0xFF;
+		pkt->packed_protobuf_packet[4] = (ieeeaddr>>(8*4))&0xFF;
+		pkt->packed_protobuf_packet[3] = (ieeeaddr>>(8*3))&0xFF;
+		pkt->packed_protobuf_packet[2] = (ieeeaddr>>(8*2))&0xFF;
+		pkt->packed_protobuf_packet[1] = (ieeeaddr>>(8*1))&0xFF;
+		pkt->packed_protobuf_packet[0] = (ieeeaddr>>(8*0))&0xFF;
 
 		if( si_send_packet(pkt, NULL, NULL) != 0)
 		{
