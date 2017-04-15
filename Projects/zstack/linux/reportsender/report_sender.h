@@ -1,0 +1,2 @@
+#define REPORT_SENDER 21
+#define CMD_SEND_REPORT 1

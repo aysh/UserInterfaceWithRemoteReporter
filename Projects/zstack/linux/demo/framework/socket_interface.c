@@ -52,6 +52,7 @@
 #include "nwkmgr.pb-c.h"
 #include "gateway.pb-c.h"
 #include "otasrvr.pb-c.h"
+#include "report_sender.h"
 #include "network_info_engine.h"
 #include "device_list_engine.h"
 #include "sensor_engine.h"
@@ -97,6 +98,7 @@ int current_cponfirmation_timeout = INITIAL_CONFIRMATION_TIMEOUT;
 server_details_t network_manager_server;
 server_details_t gateway_server;
 server_details_t ota_server;
+server_details_t report_sender_server;
 tu_timer_t confirmation_wait_timer = TIMER_RESET_VALUE;
 confirmation_processing_cb_t confirmation_processing_cb = NULL;
 void * confirmation_processing_arg = NULL;
@@ -264,6 +266,10 @@ int si_send_packet(pkt_buf_t * pkt, confirmation_processing_cb_t _confirmation_p
 	else if (pkt->header.subsystem == ZSTACK_OTASYS_IDS__RPC_SYS_PB_OTA_MGR)
 	{
 		server = &ota_server;
+	}
+	else if (pkt->header.subsystem == REPORT_SENDER)
+	{
+		server = &report_sender_server;
 	}
 	else
 	{
@@ -459,6 +465,16 @@ void si_ota_incoming_data_handler(pkt_buf_t * pkt, int len)
 	}
 }
 
+void si_report_sender_incoming_data_handler(pkt_buf_t * pkt, int len)
+{
+	switch (pkt->header.cmd_id)
+	{
+		default:
+			UI_PRINT_LOG("Unsupported incoming command id from report sender server (cmd_id %d)", (pkt->header.cmd_id));
+			break;
+	}
+}
+
 void si_init_state_machine(bool timed_out, void * arg)
 {
 	static int state = 0;
@@ -539,7 +555,26 @@ void ota_server_connected_disconnected_handler(void)
 	ota_server.confirmation_timeout_interval = INITIAL_CONFIRMATION_TIMEOUT;
 }
 
-int si_init(char * nwk_manager_server_hostname, u_short nwk_manager_server_port, char * gateway_server_hostname, u_short gateway_server_port, char * ota_server_hostname, u_short ota_server_port)
+void report_sender_server_connected_disconnected_handler(void)
+{
+	static tu_timer_t init_state_machine_timer = {0,0,0,0,0};
+	
+	UI_PRINT_LOG("report_sender_server_connected_disconnected_handler");
+	report_sender_server.confirmation_timeout_interval = INITIAL_CONFIRMATION_TIMEOUT;
+	if (!report_sender_server.connected)
+	{
+		tu_kill_timer(&init_state_machine_timer);
+		si_init_state_machine(false, NULL);
+		ds_network_status.state = ZIGBEE_NETWORK_STATE_UNAVAILABLE;
+		ui_redraw_network_info();
+	}
+	else
+	{
+		tu_set_timer(&init_state_machine_timer, INIT_STATE_MACHINE_STARTUP_DELAY, false, init_state_machine_startup_handler, NULL);
+	}
+}
+
+int si_init(char * nwk_manager_server_hostname, u_short nwk_manager_server_port, char * gateway_server_hostname, u_short gateway_server_port, char * ota_server_hostname, u_short ota_server_port, char * report_sender_server_hostname, u_short report_sender_server_port)
 {
 	if (tcp_new_server_connection(&network_manager_server, nwk_manager_server_hostname, nwk_manager_server_port, (server_incoming_data_handler_t)si_nwk_manager_incoming_data_handler, "NWK_MGR", nwk_mgr_server_connected_disconnected_handler) == -1)
 	{
@@ -559,6 +594,12 @@ int si_init(char * nwk_manager_server_hostname, u_short nwk_manager_server_port,
 		tcp_disconnect_from_server(&gateway_server);
 		tcp_disconnect_from_server(&network_manager_server);
 		fprintf(stderr,"ERROR, wrong ota server\n");
+		return -1;
+	}
+
+	if (tcp_new_server_connection(&report_sender_server, report_sender_server_hostname, report_sender_server_port, (server_incoming_data_handler_t)si_report_sender_incoming_data_handler, "REPORT_SENDER", report_sender_server_connected_disconnected_handler) == -1)
+	{
+		fprintf(stderr,"ERROR, wrong report sender server\n");
 		return -1;
 	}
 

@@ -3,5 +3,5 @@
 # start_application
 #
 echo "Starting application"
-~/Z-Stack_Linux_Gateway-1.0.1/Source/Projects/zstack/linux/demo/project/main.bin 127.0.0.1 2540 127.0.0.1 2541 127.0.0.1 2525
+~/Z-Stack_Linux_Gateway-1.0.1/Source/Projects/zstack/linux/demo/project/main.bin 127.0.0.1 2540 127.0.0.1 2541 127.0.0.1 2525 127.0.0.1 8888
 echo Done

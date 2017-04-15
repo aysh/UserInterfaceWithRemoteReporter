@@ -200,12 +200,13 @@ void system_process_zcl_frame_receive_indication(pkt_buf_t * pkt)
 			UI_PRINT_LOG("manufacturercode = (none)");
 		}
 		UI_PRINT_LOG("clientserverdirection = %d", msg->clientserverdirection);
-		UI_PRINT_LOG("commandid = %d", msg->commandid);
 		//Hack this portion
-		UI_PRINT_LOG("Yaay! I got the commandid  { %d }, ieeeaddress { 0x%016X } and endpointsrc { 0x%04X } ya bastard", 
-msg->commandid, msg->srcaddress->ieeeaddr, endpointidsrc);
-		send_report_data(msg->srcaddress->ieeeaddr, msg->commandid);
+		uint8_t commandid = msg->commandid;
+		uint64_t ieeeaddr = msg->srcaddress->ieeeaddr;
+		//UI_PRINT_LOG("Yaay! I got the commandid  { %d }, ieeeaddress { 0x%016X } and endpointsrc { 0x%04X } ya bastard", commandid, ieeeaddr, endpointidsrc);
+		send_report_data(ieeeaddr, commandid);
 		//Hack end
+		UI_PRINT_LOG("commandid = %d", commandid);
 		UI_PRINT_LOG("payload = 0x%08X", (uint32_t *)&msg->payload);
 
 		if ((msg->profileid == 0x0104) &&

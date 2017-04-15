@@ -150,15 +150,15 @@ int main(int argc, char **argv)
 	register_segmentation_fault_handler();
 
     /* check command line arguments */
-    if ((argc < 7) || (argc > 8))
+    if ((argc < 9) || (argc > 10))
 	{
        fprintf(stderr,"usage: %s <nwk_mgr_hostname> <nwk_mgr_port> <gateway_hostname> <gateway_port> <ota_hostname> <ota_port> [<log_filename>]\n", argv[0]);
        exit(0);
     }
 
-	if (argc > 7)
+	if (argc > 9)
 	{
-		log_filename = argv[7];
+		log_filename = argv[9];
 	}
 
 	ds_init();
@@ -168,7 +168,7 @@ int main(int argc, char **argv)
 		return -1;
 	}
 
-	if (si_init(argv[1], htons( atoi(argv[2])), argv[3], htons( atoi(argv[4])), argv[5], htons( atoi(argv[6]))) == 0)
+	if (si_init(argv[1], htons( atoi(argv[2])), argv[3], htons( atoi(argv[4])), argv[5], htons( atoi(argv[6])), argv[7], htons( atoi(argv[8]))) == 0)
 	{
 		while (polling_process_activity());
 
