@@ -471,6 +471,7 @@ void si_report_sender_incoming_data_handler(pkt_buf_t * pkt, int len)
 	{
 		default:
 			UI_PRINT_LOG("Unsupported incoming command id from report sender server (cmd_id %d)", (pkt->header.cmd_id));
+			confirmation_receive_handler(pkt);
 			break;
 	}
 }
